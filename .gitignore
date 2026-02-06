@@ -1,0 +1,11 @@
+node_modules/
+.venv/
+venv/
+env/
+ENV/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+pip-wheel-metadata/
