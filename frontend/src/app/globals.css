@@ -229,6 +229,17 @@ a {
 .cp-auth-link {
   color: var(--cp-accent);
   font-weight: 600;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  line-height: 1.2;
+}
+
+.cp-auth-link:focus-visible {
+  outline: 2px solid rgba(21, 71, 52, 0.35);
+  outline-offset: 3px;
+  border-radius: 999px;
 }
 
 .cp-auth-actions {

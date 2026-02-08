@@ -1,3 +1,4 @@
 {
-  "nextjs.rootDir": "frontend"
+  "nextjs.rootDir": "frontend",
+  "terminal.integrated.defaultProfile.windows": "PowerShell"
 }

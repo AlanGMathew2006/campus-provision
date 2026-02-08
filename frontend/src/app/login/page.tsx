@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "../../context/AuthContext";
-import type { User } from "../../types/user";
+import { loginRequest } from "../../features/auth/api";
 import Button from "../../components/ui/Button";
 import Input from "../../components/ui/Input";
 
@@ -11,10 +11,8 @@ export type LoginForm = {
   password: string;
 };
 
-export type LoginResponse = {
-  token: string;
-  user: User;
-};
+const getErrorMessage = (error: unknown) =>
+  error instanceof Error ? error.message : "Login failed. Please try again.";
 
 export default function LoginPage() {
   const [form, setForm] = useState<LoginForm>({ email: "", password: "" });
@@ -39,21 +37,15 @@ export default function LoginPage() {
 
     setIsSubmitting(true);
     try {
-      // TODO: Replace with real auth request.
-      await new Promise((resolve) => setTimeout(resolve, 600));
-      const response: LoginResponse = {
-        token: "demo-token",
-        user: {
-          id: "demo-user",
-          email: form.email,
-          name: "Campus User",
-        },
-      };
+      const response = await loginRequest({
+        email: form.email.trim(),
+        password: form.password,
+      });
       setAuth(response.token, response.user);
       router.push("/dashboard");
     } catch (submitError) {
       console.error(submitError);
-      setError("Login failed. Please try again.");
+      setError(getErrorMessage(submitError));
     } finally {
       setIsSubmitting(false);
     }

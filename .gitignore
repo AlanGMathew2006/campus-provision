@@ -12,3 +12,5 @@ __pycache__/
 *.pyd
 .Python
 pip-wheel-metadata/
+.env
+backend/.env

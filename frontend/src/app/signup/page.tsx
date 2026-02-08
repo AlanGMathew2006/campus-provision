@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "../../context/AuthContext";
-import type { User } from "../../types/user";
+import { signupRequest } from "../../features/auth/api";
 import Button from "../../components/ui/Button";
 import Input from "../../components/ui/Input";
 
@@ -26,6 +26,9 @@ export default function SignupPage() {
   const { setAuth } = useAuth();
   const router = useRouter();
 
+  const getErrorMessage = (error: unknown) =>
+    error instanceof Error ? error.message : "Signup failed. Please try again.";
+
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
     setForm((prev) => ({ ...prev, [name]: value }));
@@ -47,18 +50,16 @@ export default function SignupPage() {
 
     setIsSubmitting(true);
     try {
-      // TODO: Replace with real signup request.
-      await new Promise((resolve) => setTimeout(resolve, 600));
-      const user: User = {
-        id: "demo-user",
-        email: form.email,
-        name: form.name,
-      };
-      setAuth("demo-token", user);
+      const response = await signupRequest({
+        name: form.name.trim(),
+        email: form.email.trim(),
+        password: form.password,
+      });
+      setAuth(response.token, response.user);
       router.push("/dashboard");
     } catch (submitError) {
       console.error(submitError);
-      setError("Signup failed. Please try again.");
+      setError(getErrorMessage(submitError));
     } finally {
       setIsSubmitting(false);
     }
