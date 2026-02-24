@@ -5,7 +5,6 @@ export type AuthUser = {
 };
 
 export type AuthResponse = {
-  token: string;
   user: AuthUser;
 };
 
@@ -17,5 +16,14 @@ export type LoginPayload = {
 export type SignupPayload = {
   name: string;
   email: string;
+  password: string;
+};
+
+export type PasswordResetRequestPayload = {
+  email: string;
+};
+
+export type PasswordResetConfirmPayload = {
+  token: string;
   password: string;
 };

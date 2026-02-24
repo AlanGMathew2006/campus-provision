@@ -1,10 +1,12 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useAuth } from "../../context/AuthContext";
 
 export default function Navbar() {
   const { user, clearAuth, isReady } = useAuth();
+  const router = useRouter();
 
   if (!isReady) {
     return null;
@@ -30,7 +32,10 @@ export default function Navbar() {
             <button
               className="cp-button cp-button--ghost cp-button--sm"
               type="button"
-              onClick={clearAuth}
+              onClick={async () => {
+                await clearAuth();
+                router.push("/login");
+              }}
             >
               Log out
             </button>

@@ -1,7 +1,9 @@
 "use client";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { useAuth } from "../../context/AuthContext";
+import { useRedirectIfAuthenticated } from "../../hooks/useAuth";
 import { loginRequest } from "../../features/auth/api";
 import Button from "../../components/ui/Button";
 import Input from "../../components/ui/Input";
@@ -11,8 +13,16 @@ export type LoginForm = {
   password: string;
 };
 
-const getErrorMessage = (error: unknown) =>
-  error instanceof Error ? error.message : "Login failed. Please try again.";
+const getErrorMessage = (error: unknown) => {
+  if (!(error instanceof Error)) {
+    return "Login failed. Please try again.";
+  }
+  const message = error.message.toLowerCase();
+  if (message.includes("invalid email or password")) {
+    return "Email or password is incorrect.";
+  }
+  return error.message;
+};
 
 export default function LoginPage() {
   const [form, setForm] = useState<LoginForm>({ email: "", password: "" });
@@ -20,6 +30,8 @@ export default function LoginPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { setAuth } = useAuth();
   const router = useRouter();
+
+  useRedirectIfAuthenticated();
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
@@ -41,7 +53,7 @@ export default function LoginPage() {
         email: form.email.trim(),
         password: form.password,
       });
-      setAuth(response.token, response.user);
+      setAuth(response.user);
       router.push("/dashboard");
     } catch (submitError) {
       console.error(submitError);
@@ -112,9 +124,9 @@ export default function LoginPage() {
                 <label className="cp-auth-row">
                   <input type="checkbox" /> Remember me
                 </label>
-                <button className="cp-auth-link" type="button">
+                <Link className="cp-auth-link" href="/forgot-password">
                   Forgot password?
-                </button>
+                </Link>
               </div>
 
               {error ? <p className="cp-error">{error}</p> : null}

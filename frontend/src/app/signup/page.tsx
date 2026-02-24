@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "../../context/AuthContext";
+import { useRedirectIfAuthenticated } from "../../hooks/useAuth";
 import { signupRequest } from "../../features/auth/api";
 import Button from "../../components/ui/Button";
 import Input from "../../components/ui/Input";
@@ -26,8 +27,18 @@ export default function SignupPage() {
   const { setAuth } = useAuth();
   const router = useRouter();
 
-  const getErrorMessage = (error: unknown) =>
-    error instanceof Error ? error.message : "Signup failed. Please try again.";
+  useRedirectIfAuthenticated();
+
+  const getErrorMessage = (error: unknown) => {
+    if (!(error instanceof Error)) {
+      return "Signup failed. Please try again.";
+    }
+    const message = error.message.toLowerCase();
+    if (message.includes("email already registered")) {
+      return "An account with that email already exists.";
+    }
+    return error.message;
+  };
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
@@ -48,6 +59,11 @@ export default function SignupPage() {
       return;
     }
 
+    if (form.password.length < 8) {
+      setError("Password must be at least 8 characters.");
+      return;
+    }
+
     setIsSubmitting(true);
     try {
       const response = await signupRequest({
@@ -55,7 +71,7 @@ export default function SignupPage() {
         email: form.email.trim(),
         password: form.password,
       });
-      setAuth(response.token, response.user);
+      setAuth(response.user);
       router.push("/dashboard");
     } catch (submitError) {
       console.error(submitError);

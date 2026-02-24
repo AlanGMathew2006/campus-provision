@@ -248,6 +248,16 @@ a {
   gap: 12px;
 }
 
+.cp-success {
+  margin: 0;
+  font-size: 0.9rem;
+  color: #0f5132;
+  background: rgba(21, 71, 52, 0.12);
+  border: 1px solid rgba(21, 71, 52, 0.2);
+  padding: 10px 12px;
+  border-radius: 12px;
+}
+
 @media (max-width: 900px) {
   .cp-auth-shell {
     grid-template-columns: 1fr;
